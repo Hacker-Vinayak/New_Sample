@@ -1,0 +1,99 @@
+
+/* Base styles */
+body {
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    align-items: flex-start; /* Align items to the top */
+    height: 100vh;
+    background-color: lightgrey;
+    margin: 0; /* Remove default margin */
+}
+
+#cameraContainer {
+    width: 58.5%; /* Decrease width of the container */
+    height: 94%; /* Adjust height as needed */
+    display: flex; /* Correct display value */
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the left */
+    border: 10px solid black; /* Border for the camera feed */
+    background-color: white; /* Ensure the background is white for better visibility */
+    padding: 10px; /* Padding around the content */
+    position: absolute; /* Position the container absolutely */
+    top: 0; /* Align the container to the top */
+    left: 0; /* Align the container to the left */
+}
+
+img {
+    width: 100%; /* Make the image take full width of the container */
+    height: 90%; /* Make the image take full height of the container */
+    display: block; /* Ensure the image is displayed */
+    background-color: #000; /* Black background to simulate the video feed area */
+    object-fit: cover; /* Ensures the image covers the entire container without stretching */
+}
+
+.controlsContainer {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    gap: 10px; /* Space between elements */
+    margin-bottom: 20px;
+}
+
+select {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #007BFF; /* Blue border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #fff; /* White background */
+    color: #333; /* Text color */
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* Smooth color transition */
+    max-width: 180px; /* Limit width of dropdown */
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 2px solid #8cff00; /* Green border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #00eeff; /* Blue background */
+    color: #ffffff; /* Text color */
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* Smooth color transition */
+}
+
+button.active {
+    background-color: #FFA500; /* Orange background when active */
+    border-color: #0026ff; /* Orange border when active */
+    color: #fff; /* Text color when active */
+}
+
+select.active {
+    background-color: #FFA500; /* Orange background when active */
+    border-color: #FFA500; /* Orange border when active */
+    color: hsl(0, 0%, 100%); /* Text color when active */
+}
+
+#statusMessage {
+    margin-top: 20px;
+    font-size: 16px;
+    color: green; /* Change color as needed */
+}
+
+/* Overriding existing CSS... */
+select {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #007BFF; /* Blue border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #f0f0f0; /* Gray background */
+    color: #333; /* Text color */
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s; /* Smooth color transition */
+    max-width: 180px; /* Limit width of dropdown */
+}
+
+select.active {
+    background-color: #FFA500; /* Orange background when active */
+    border-color: #FFA500; /* Orange border when active */
+    color: hsl(0, 0%, 100%); /* Text color when active */
+}

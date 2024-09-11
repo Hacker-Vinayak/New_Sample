@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Stream</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div id="cameraContainer">
+        <div class="controlsContainer">
+            <select id="cameraSelector" onchange="highlightDropdown()">
+                <option value="0">AV TO USB</option>
+                <option value="1">WEB CAM</option>
+            </select>
+            <select id="videoStandardSelector" onchange="highlightDropdown()">
+                <option value="none">Video Standard</option>
+                <option value="none">None</option>
+                <option value="ntsc">NTSC</option>
+                <option value="pal">PAL</option>
+            </select>
+            <select id="dimensionSelector" onchange="highlightDropdown()">
+                <option value="none">Video Resolution</option>
+                <option value="640x480">Resolution: 640x480</option>
+                <!-- Add more resolutions as needed -->
+            </select>
+            <button id="connectButton" onclick="connectCamera()">Connect</button>
+            <button id="snapshotButton" onclick="takeSnapshot()">Take Snapshot</button>
+            <button id="recordButton" onclick="toggleRecording()">Start Recording</button>
+        </div>
+        <img id="cameraFeed" src="" alt="Camera Feed">
+    </div>
+    
+    <script>
+        let isRecording = false; // Track recording status
+
+        function connectCamera() {
+            resetButtonColors(); // Reset all button colors
+            resetDropdown(); // Reset dropdown color
+            const cameraSelector = document.getElementById('cameraSelector');
+            const videoStandardSelector = document.getElementById('videoStandardSelector');
+            const dimensionSelector = document.getElementById('dimensionSelector');
+            const selectedCameraIndex = cameraSelector.value;
+            const selectedStandard = videoStandardSelector.value;
+            const selectedResolution = dimensionSelector.value;
+
+            // Send a request to the Flask backend to update the camera
+            fetch(`/connect_camera?camera_index=${selectedCameraIndex}&video_standard=${selectedStandard}&resolution=${selectedResolution}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    // Display the video feed after connecting to the correct camera
+                    const img = document.getElementById('cameraFeed');
+                    img.src = `/video_feed?camera_index=${selectedCameraIndex}&video_standard=${selectedStandard}&resolution=${selectedResolution}`;
+                    img.style.display = 'block';
+
+                    // Change button color to orange when active and revert to blue after 2 seconds
+                    toggleButtonState('connectButton');
+                });
+        }
+
+        function takeSnapshot() {
+            resetButtonColors(); // Reset all button colors
+            resetDropdown(); // Reset dropdown color
+            fetch('/take_snapshot', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    // No status message is handled here
+
+                    // Change button color to orange when active and revert to blue after 2 seconds
+                    toggleButtonState('snapshotButton');
+                });
+        }
+
+        function toggleRecording() {
+            resetButtonColors(); // Reset all button colors
+            resetDropdown(); // Reset dropdown color
+            const recordButton = document.getElementById('recordButton');
+
+            if (isRecording) {
+                // Stop recording
+                fetch('/stop_recording', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        recordButton.innerText = 'Start Recording'; // Change button text
+                        isRecording = false; // Update status
+                    });
+            } else {
+                // Start recording
+                fetch('/start_recording', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        recordButton.innerText = 'Stop Recording'; // Change button text
+                        isRecording = true; // Update status
+                    });
+            }
+
+            // Change button color to orange when active and revert to blue after 2 seconds
+            toggleButtonState('recordButton');
+        }
+
+        function toggleButtonState(buttonId) {
+            const button = document.getElementById(buttonId);
+            button.classList.add('active');
+            
+            // Revert color to blue after 2 seconds
+            setTimeout(() => {
+                button.classList.remove('active');
+            }, 2000);
+        }
+
+        function highlightDropdown() {
+            const dropdowns = [document.getElementById('cameraSelector'), document.getElementById('videoStandardSelector'), document.getElementById('dimensionSelector')];
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.add('active');
+                
+                // Revert color to blue after 2 seconds
+                setTimeout(() => {
+                    dropdown.classList.remove('active');
+                }, 2000);
+            });
+        }
+
+        function resetButtonColors() {
+            const buttons = document.querySelectorAll('.controlsContainer button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+        }
+
+        function resetDropdown() {
+            const dropdowns = [document.getElementById('cameraSelector'), document.getElementById('videoStandardSelector'), document.getElementById('dimensionSelector')];
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    </script>
+</body>
+</html>
