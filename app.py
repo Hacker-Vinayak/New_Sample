@@ -133,7 +133,6 @@ base_output_path = os.path.join(os.path.expanduser("~"), "Desktop", "Tonbo_S_R")
 if not os.path.exists(base_output_path):
     os.makedirs(base_output_path)
 
-
 def set_camera(index):
     global camera
     if camera is not None:
@@ -141,18 +140,19 @@ def set_camera(index):
     camera = cv2.VideoCapture(index)
     if not camera.isOpened():
         raise ValueError(f"Camera with index {index} could not be opened.")
-
+    else:
+        print(f"Camera {index} opened successfully.")
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 def generate_frames():
     global camera, recording, video_writer
     while True:
         success, frame = camera.read()
         if not success:
+            print("Failed to read frame from camera.")
             break
         else:
             if recording:
@@ -162,11 +162,9 @@ def generate_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 @app.route('/connect_camera', methods=['POST'])
 def connect_camera():
@@ -177,7 +175,6 @@ def connect_camera():
         return jsonify({"message": f"Camera {camera_index} connected."})
     except ValueError as e:
         return jsonify({"message": str(e)}), 400
-
 
 @app.route('/take_snapshot', methods=['POST'])
 def take_snapshot():
@@ -197,7 +194,6 @@ def take_snapshot():
         return jsonify({"message": f"Snapshot saved as {image_path}"})
     else:
         return jsonify({"message": "Failed to take snapshot."})
-
 
 @app.route('/start_recording', methods=['POST'])
 def start_recording():
@@ -226,9 +222,7 @@ def stop_recording():
     else:
         return jsonify({"message": "No active recording to stop."})
 
-
 if __name__ == "__main__":
-    # Initialize the default camera
     try:
         set_camera(camera_index)
     except ValueError as e:
