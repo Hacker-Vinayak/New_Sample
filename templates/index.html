@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,24 +40,24 @@
             resetButtonColors(); // Reset all button colors
             resetDropdown(); // Reset dropdown color
             const cameraSelector = document.getElementById('cameraSelector');
-            const videoStandardSelector = document.getElementById('videoStandardSelector');
-            const dimensionSelector = document.getElementById('dimensionSelector');
             const selectedCameraIndex = cameraSelector.value;
-            const selectedStandard = videoStandardSelector.value;
-            const selectedResolution = dimensionSelector.value;
 
             // Send a request to the Flask backend to update the camera
-            fetch(`/connect_camera?camera_index=${selectedCameraIndex}&video_standard=${selectedStandard}&resolution=${selectedResolution}`, { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    // Display the video feed after connecting to the correct camera
-                    const img = document.getElementById('cameraFeed');
-                    img.src = `/video_feed?camera_index=${selectedCameraIndex}&video_standard=${selectedStandard}&resolution=${selectedResolution}`;
-                    img.style.display = 'block';
+            fetch('/connect_camera', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({camera_index: selectedCameraIndex})
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the video feed after connecting to the correct camera
+                const img = document.getElementById('cameraFeed');
+                img.src = `/video_feed`;
+                img.style.display = 'block';
 
-                    // Change button color to orange when active and revert to blue after 2 seconds
-                    toggleButtonState('connectButton');
-                });
+                // Change button color to orange when active and revert to blue after 2 seconds
+                toggleButtonState('connectButton');
+            });
         }
 
         function takeSnapshot() {
